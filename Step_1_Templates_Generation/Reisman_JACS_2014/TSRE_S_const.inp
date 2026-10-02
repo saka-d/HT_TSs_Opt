@@ -1,0 +1,6 @@
+$constrain
+  distance: 38,1,auto
+  distance: 38,20,auto
+  distance: 38,37,auto
+  distance: 1,20,auto
+$end

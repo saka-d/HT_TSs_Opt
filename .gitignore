@@ -1,0 +1,83 @@
+# =========================
+# CREST outputs
+# =========================
+crest.out
+crest_best.xyz
+crest_conformers.xyz
+crest_rotamers.xyz
+crest.energies
+crest.restart
+coord
+coord.original
+charges
+wbo
+
+# =========================
+# xTB outputs / conformer calculations
+# =========================
+conformers/
+reopt/
+xtb.out
+xtbopt.xyz
+xtbopt.log
+xtbrestart
+xtbtopo.mol
+.xtboptok
+
+# =========================
+# mARC generated data
+# =========================
+mARC_input/
+
+# =========================
+# Batch / runtime logs
+# =========================
+*.log
+nohup.out
+
+# =========================
+# Gaussian / ORCA heavy outputs
+# =========================
+*.chk
+*.fchk
+*.rwf
+*.cube
+*.cub
+*.gbw
+*.densities
+*.engrad
+*.hess
+
+# =========================
+# Temporary / editor files
+# =========================
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+
+# =========================
+# Python cache
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+
+# =========================
+# Keep scripts and important inputs
+# =========================
+!*.sh
+!*.inp
+!README*
+
+# Generated Reisman substrate directories
+Step_1_Templates_Generation/Reisman_JACS_2014/TSRE_R_3*/
+Step_1_Templates_Generation/Reisman_JACS_2014/TSRE_S_3*/
+
+# Generated calculation directories
+Step_1_Templates_Generation/Reisman_JACS_2014/crest_xtb_TSRE_R/
+
+# Unrelated generated ligand structures
+NN_Ligands/XYZ_Structures/
