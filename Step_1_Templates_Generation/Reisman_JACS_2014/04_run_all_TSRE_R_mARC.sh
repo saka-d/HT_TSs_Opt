@@ -96,7 +96,7 @@ do
     cd mARC_input || exit 1
 
     echo "Running mARC ..."
-    python -m navicat_marc         -i conf_*.xyz         -m rmsd         -ewin 10         -mine         > marc.out 2>&1
+    python -m navicat_marc         -i conf_*.xyz         -m rmsd         -ewin 10         -mine         -v 2         > marc.out 2>&1
 
     status=$?
 

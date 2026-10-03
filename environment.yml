@@ -1,0 +1,11 @@
+name: crest_env
+channels:
+  - defaults
+dependencies:
+  - crest
+  - xtb
+  - python
+  - matplotlib
+  - numpy
+  - scipy
+prefix: /home/user/anaconda3/envs/crest_env
