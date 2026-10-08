@@ -1,24 +1,18 @@
 #!/usr/bin/env bash
 set -u
 
-# Run preliminary mARC conformer selection for all TSRE_R substrates (3a-3n)
-# using the current constrained GFN2-xTB optimized structures.
+# Run mARC for all TSRE_S substrates (3a-3n)
+# using constrained GFN2-xTB optimized conformers.
 #
-# This is a preliminary reduction step, NOT the final Sigman workflow.
-#
-# Expected structure:
-#   TSRE_R_3a_H_Me/
-#     reopt/conf_0001/xtbopt.xyz
-#     reopt/conf_0001/xtb.out
-#     reopt/conf_0002/...
-#   ...
+# Selection settings:
+#   RMSD metric
+#   maximum target cluster count: 5
+#   10 kcal/mol energy window
+#   choose minimum-energy conformer from each cluster
+#   verbosity level 2
 #
 # Run from:
 # ~/HT_TSs_Opt/Step_1_Templates_Generation/Reisman_JACS_2014
-#
-# Requires:
-#   conda activate crest_env
-#   navicat-marc installed in the active environment
 
 command -v python >/dev/null 2>&1 || {
     echo "ERROR: python not found in PATH."
@@ -31,7 +25,7 @@ python -m navicat_marc --help >/dev/null 2>&1 || {
     exit 1
 }
 
-for d in TSRE_R_3{a..n}_*/
+for d in TSRE_S_3{a..n}_*/
 do
     [[ -d "$d" ]] || continue
 
@@ -46,14 +40,14 @@ do
         continue
     fi
 
-    cd "$d" || exit 1
+    mkdir -p "$d/mARC_input"
 
-    mkdir -p mARC_input
-    rm -f mARC_input/conf_*.xyz
+    # Remove old mARC XYZ files so old accepted/rejected files cannot be re-read.
+    rm -f "$d"/mARC_input/conf_*.xyz
 
     count=0
 
-    for c in reopt/conf_*/
+    for c in "$d"/reopt/conf_*/
     do
         [[ -d "$c" ]] || continue
 
@@ -80,7 +74,7 @@ do
             head -n 1 "$c/xtbopt.xyz"
             echo "$energy"
             tail -n +3 "$c/xtbopt.xyz"
-        } > "mARC_input/${name}.xyz"
+        } > "$d/mARC_input/${name}.xyz"
 
         count=$((count + 1))
     done
@@ -89,31 +83,39 @@ do
 
     if [[ $count -eq 0 ]]; then
         echo "WARNING: no valid structures found. Skipping mARC."
-        cd ..
         continue
     fi
 
-    cd mARC_input || exit 1
+    (
+        cd "$d/mARC_input" || exit 1
 
-    echo "Running mARC ..."
-    python -m navicat_marc         -i conf_*.xyz         -m rmsd         -ewin 10         -mine         -v 2         > marc.out 2>&1
+        echo "Running mARC ..."
+        python -m navicat_marc \
+          -i conf_[0-9][0-9][0-9][0-9].xyz \
+          -m rmsd \
+          -n 5 \
+          -ewin 10 \
+          -mine \
+          -v 2 \
+          > marc.out 2>&1
+    )
 
     status=$?
 
     if [[ $status -eq 0 ]]; then
+        accepted=$(find "$d/mARC_input" -maxdepth 1 -type f -name '*_accepted.xyz' | wc -l)
         echo "mARC completed successfully for ${d%/}"
+        echo "Accepted conformers: $accepted"
     else
         echo "WARNING: mARC failed for ${d%/}"
-        echo "Check: ${d%/}/mARC_input/marc.out"
+        echo "Check: $d/mARC_input/marc.out"
     fi
-
-    cd ../..
 
     echo "Finished: $(date)"
 done
 
 echo
 echo "============================================================"
-echo "All available TSRE_R substrates processed."
+echo "All available TSRE_S substrates processed."
 echo "Finished: $(date)"
 echo "============================================================"
