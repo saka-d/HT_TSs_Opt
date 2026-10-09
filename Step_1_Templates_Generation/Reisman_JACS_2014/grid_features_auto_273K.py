@@ -155,7 +155,7 @@ def process_sp_dir(sp_dir: Path, temperature: float):
 
     for log in logs:
         stem = log.stem
-        density_cube = sp_dir / f"{stem}_density.cube"
+        density_cube = sp_dir / f"{stem}_Dt.cube"
         esp_cube = sp_dir / f"{stem}_ESP.cube"
 
         try:
